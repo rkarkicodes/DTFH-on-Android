@@ -1,0 +1,262 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import main main
+#:import AsyncImage kivy.uix.image
+
+ScreenManagement:
+    transition:FadeTransition()
+    MainScreen:
+    NowPlaying:
+
+
+
+<MainScreen>:
+    name:"main"
+    Podcastback:
+        ActionBar:
+            ActionView:
+                use_separator: True
+
+                ActionPrevious:
+                    title: "Duncan Trussel Family"
+
+                    with_previous: False
+                    app_icon:"icon.png"
+                ActionButton:
+                    on_press: app.root.play_button()
+                    icon: "player/play.png"
+                ActionButton:
+#                    on_press: app.root.current= app.root.screen_names[1]
+                    icon: "extras.png"
+        EpisodeList:
+            id:scr
+            do_scroll_y:True
+
+            bar_color:[1,2,1,1]
+            GridLayout:
+                spacing:16
+                cols:1
+                size_hint_y:None
+                height: self.minimum_height
+                add_widgets:scr.load_epis()
+
+<EpisodePage>:
+    id:epi
+
+    Podcastback:
+
+    GridLayout:
+        orientation:'horizontal'
+        cols:1
+        spacing:20
+        padding:[10,0,10,0]
+
+        ActionBar:
+            ActionView:
+
+                use_separator: True
+                ActionPrevious:
+                    title: "Duncan Trussel Family"
+                    with_previous: False
+                    app_icon:"icon.png"
+                    on_press:
+                        app.root.current= "main"
+                        app.root.rem(epi)
+                ActionButton:
+
+                    on_press:app.root.play_button()
+                    icon: "player/play.png"
+                ActionButton:
+                    on_press: app.root.forward()
+                    icon: "extras.png"
+
+
+#            padding:[20,20,20,20]
+        GridLayout:
+            size_hint_y:2
+            cols:1
+            padding:[120,20,120,0]
+
+            AsyncImage:
+                allow_stretch:True
+                halign:"center"
+
+
+                keep_ratio:False
+
+#                size:self.parent.size
+
+                pos: self.parent.pos
+                source:root.picture
+
+
+
+
+        ScrollView:
+            padding:[10,10,10,10]
+            Label:
+                halign:"center"
+#                valign:"top"
+
+                text_size: self.width, self.height
+                height: self.texture_size[1]
+
+
+                text:root.info
+                max_lines: 0
+
+
+                background_color:[1,1,1,0]
+        GridLayout:
+            id:audio_player
+
+            cols:1
+            rows:2
+            size_hint_y:1
+            padding:[10,0,0,0]
+            GridLayout:
+                cols:1
+                rows:1
+                size_hint_y:1
+                padding:[40,0,0,0]
+                spacing:20
+
+                Slider:
+                    id:slider
+                    value:0
+
+    #          size_hint_y:1
+    #                size_hint_x:None
+            BoxLayout:
+                orientation:"horizontal"
+    #            rows:3
+    #            cols:1
+                size_hint_y:2
+                padding:[120,10,120,60]
+
+                PlayerButton:
+                    id:rewind
+                    img:"player/rewind.png"
+                    size_hint_x:1
+                    size_hint_y:None
+                    on_press:app.root.rewind()
+
+
+
+                PlayerButton:
+                    id:play
+                    img:"player/play.png"
+                    size_hint_x:1
+                    size_hint_y:None
+
+
+
+                    on_press:
+                        epi.button_change()
+                        app.root.now_playing(root.name,root.audio)
+
+
+                PlayerButton:
+                    id:forward
+                    img:"player/forward.png"
+                    size_hint_x:1
+                    size_hint_y:None
+                    text:'k'
+                    on_press:app.root.forward()
+
+
+
+
+
+
+<Episode>:
+    id:episode
+    size_hint_y: None
+    cols: 1
+    height:400
+    info:self.info
+    padding:[8,5,5,5]
+
+    Button:
+        background_color:[1,1,1,0]
+        on_press:app.root.episode_page(episode.number,episode.info,episode.picture,episode.audioLink)
+
+        GridLayout:
+            padding:[10,10,5,10]
+
+            pos: self.parent.pos
+            size: self.parent.size
+            orientation: "horizontal"
+            cols:2
+            rows:1
+
+            AsyncImage:
+                size_hint_x:4
+                halign:"left"
+                source:episode.picture
+                pos: self.parent.pos
+                size: self.parent.size
+
+            GridLayout:
+                size_hint_x:6
+                rows:2
+                cols:1
+                padding:[5,20,0,0]
+                spacing:5
+
+
+                Label:
+                    halign:"center"
+                    valign:"bottom"
+                    size_hint_y:3
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    text: (episode.number + ":" + episode.title).encode('ascii','replace')
+                    color:1,1,1
+                    bold:True
+                    max_lines: 2
+
+                Label:
+
+                    halign:"center"
+                    valign:"top"
+                    size_hint_y: 7
+                    text_size: self.width, self.height
+                    height: self.texture_size[1]
+                    text:(episode.info).encode('ascii','ignore')
+                    max_lines: 4
+    Seperator:
+
+<Podcastback>:
+    cols:1
+    canvas.before:
+
+        Rectangle:
+            pos:self.pos
+            size:self.size
+            source:"dt-new-bg.png"
+
+<Seperator@Widget>:
+    id: separator
+    size_hint_y: None
+    height: 3
+    thickness: 2
+    canvas:
+        Color:
+            rgb: 0, 0, 0
+        Rectangle:
+            pos: self.center_x/2, separator.center_y
+            size: separator.width, 3
+
+<PlayerButton@Button>:
+    img:""
+    id:player_button
+    background_color:[1,1,1,0.1]
+    height:170
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source:root.img
+
+<NowPlaying>:
+    name:"NowPlaying"
