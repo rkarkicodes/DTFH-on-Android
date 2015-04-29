@@ -4,7 +4,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen,ScreenManager,FadeTransition,TransitionBase
 from kivy.uix.scrollview import ScrollView
 from kivy.properties import ObjectProperty,ListProperty,StringProperty,NumericProperty
-# from jnius import autoclass
+from jnius import autoclass
 from kivy.clock import Clock
 import json
 
